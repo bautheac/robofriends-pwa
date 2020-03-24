@@ -15,11 +15,29 @@ class App extends Component {
     }
   }
 
+
   componentDidMount() {
-    fetch('https://jsonplaceholder.typicode.com/users')
-    .then( response => { return response.json()} )
-    .then( users => { this.setState({ robots: users }) });
+
+    var urls = new Array(15);
+    for(var i = 0; i < urls.length; i++){
+      urls[i] = 'https://swapi.co/api/people/' + (i + 1)
+    }
+
+    Promise.all(urls.map(async function(url, i) {
+          let resp = await fetch(url);
+          const character = await resp.json();
+          character.id = i; character.email = i + 'test.on';
+          resp = await fetch(character.homeworld);
+          const homeworld = await resp.json();
+          character.homeworld = homeworld.name;
+          return character;
+        }))
+        .then( users => { this.setState({ robots: users })});
   }
+
+
+
+
 
   onSearchChange = (event) => {
     this.setState({ searchfield: event.target.value })
@@ -35,7 +53,7 @@ class App extends Component {
     return !robots.length ? <h1>loading...</h1> :
       (
         <div className='tc'>
-          <h1 className='f1'>robofriends</h1>
+          <h1 className='f1'>Star Wars</h1>
           <SearchBox searchChange={ this.onSearchChange }/>
           <Scroll>
             <ErrorBoundary>
