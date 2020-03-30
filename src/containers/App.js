@@ -1,68 +1,63 @@
 import React, { Component } from 'react';
+
+import { connect } from 'react-redux';
+import { setSearchField, requestRobots } from '../actions.js';
+
 import CardList from '../components/CardList.js';
 import SearchBox from '../components/SearchBox.js'
 import Scroll from '../components/Scroll.js'
+import Header from '../components/Header.js'
 import ErrorBoundary from '../components/ErrorBoundary.js'
+
 import './App.css';
 
 
-class App extends Component {
-  constructor() {
-    super()
-    this.state = {
-      robots: [],
-      searchfield: '',
-    }
+if (process.env.NODE_ENV === 'development') {
+  const whyDidYouRender = require('@welldone-software/why-did-you-render');
+  whyDidYouRender(React, {
+    trackAllPureComponents: true,
+  });
+}
+
+
+const mapStateToProps = state => { 
+  return { 
+    searchField: state.searchRobots.searchField, robots: state.requestRobots.robots,
+    isPending: state.requestRobots.isPending, error: state.requestRobots.error }
+};
+
+const mapDispatchToProps = (dispatch) => {
+  return { 
+    onSearchChange: (event) => dispatch(setSearchField(event.target.value)),
+    onRequestRobots: () => dispatch(requestRobots())
   }
+};
 
+class App extends Component { 
 
-  componentDidMount() {
+  componentDidMount() { this.props.onRequestRobots() }
 
-    var urls = new Array(15);
-    for(var i = 0; i < urls.length; i++){
-      urls[i] = 'https://swapi.co/api/people/' + (i + 1)
-    }
-
-    Promise.all(urls.map(async function(url, i) {
-          let resp = await fetch(url);
-          const character = await resp.json();
-          character.id = i; character.email = i + 'test.on';
-          resp = await fetch(character.homeworld);
-          const homeworld = await resp.json();
-          character.homeworld = homeworld.name;
-          return character;
-        }))
-        .then( users => { this.setState({ robots: users })});
-  }
-
-
-
-
-
-  onSearchChange = (event) => {
-    this.setState({ searchfield: event.target.value })
-    // console.log(filteredRobots);
-  }
 
   render() {
-    const { robots, searchfield } = this.state;
+    const { searchField, onSearchChange, robots, isPending } = this.props;
     const filteredRobots = robots.filter(robot => {
-      return robot.name.toLocaleLowerCase().includes(searchfield.toLocaleLowerCase())
+      return robot.name.toLocaleLowerCase().includes(searchField.toLocaleLowerCase())
     })
 
-    return !robots.length ? <h1>loading...</h1> :
+    return isPending ? <h1>loading...</h1> :
       (
         <div className='tc'>
-          <h1 className='f1'>Star Wars</h1>
-          <SearchBox searchChange={ this.onSearchChange }/>
+          <Header />
+          <SearchBox searchChange={ onSearchChange }/>
           <Scroll>
             <ErrorBoundary>
               <CardList robots={ filteredRobots }/> 
             </ErrorBoundary>            
           </Scroll>          
         </div>
-      );        
+      );
+       
   }
 }
 
-export default App;
+export default connect(mapStateToProps, mapDispatchToProps)(App);
