@@ -1,5 +1,5 @@
 {
-  "short_name": "React App",
+  "short_name": "Robofriends",
   "name": "Create React App Sample",
   "icons": [
     {
@@ -8,18 +8,18 @@
       "type": "image/x-icon"
     },
     {
-      "src": "logo192.png",
+      "src": "robot192.png",
       "type": "image/png",
       "sizes": "192x192"
     },
     {
-      "src": "logo512.png",
+      "src": "robot256.png",
       "type": "image/png",
-      "sizes": "512x512"
+      "sizes": "256x256"
     }
   ],
   "start_url": ".",
   "display": "standalone",
   "theme_color": "#000000",
-  "background_color": "#ffffff"
+  "background_color": "rgba(0, 128, 128, 1)"
 }

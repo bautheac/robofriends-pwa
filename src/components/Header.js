@@ -5,7 +5,7 @@ class Header extends Component {
 
     shouldComponentUpdate(nextProps, nextState){ return false; }
 
-    render() { console.log("Header"); return ( <div><h1 className="f1">Robofriends</h1></div> ) }
+    render() { return ( <div><h1 className="f1">Robofriends</h1></div> ) }
 }
 
 export default Header;
